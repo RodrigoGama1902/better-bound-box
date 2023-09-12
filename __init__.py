@@ -1,3 +1,6 @@
+# :coding: utf-8
+# :copyright: Copyright (c) 2023 Rodrigo Gama
+
 import bpy # type:ignore  
 
 from .src.better_bound_box.utils import (

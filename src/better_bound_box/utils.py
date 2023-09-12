@@ -1,3 +1,6 @@
+# :coding: utf-8
+# :copyright: Copyright (c) 2023 Rodrigo Gama
+
 '''Utils module for the better_object_bound_box addon
 
 This module provides a set of functions to use the bound box funtionality

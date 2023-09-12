@@ -10,8 +10,6 @@ and various utility functions to work with.
     :align: center
     :alt: BoundBox example
 
-| 
-
 If you are creating a Blender integration that will deal with 
 multiple objects that represents only one model and you need to work with 
 its dimensions properties, this module is for you.

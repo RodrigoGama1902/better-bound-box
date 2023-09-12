@@ -1,3 +1,6 @@
+# :coding: utf-8
+# :copyright: Copyright (c) 2023 Rodrigo Gama
+
 import bpy #type:ignore
 import bmesh #type:ignore
 

@@ -1,3 +1,6 @@
+# :coding: utf-8
+# :copyright: Copyright (c) 2023 Rodrigo Gama
+
 '''
 :class BoundVectors:  The BoundBox class is responsible for calculating each vector that generates the bound box object
 
