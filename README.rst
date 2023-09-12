@@ -1,8 +1,8 @@
 #################
-BETTER BOUND BOX - Blender Module
+BETTER BOUND BOX
 #################
 
-This module provides a better BoundBox system for Blender integrations, 
+This Blender module provides a better BoundBox system for Blender integrations, 
 with support for multiple objects and various utility functions.
 
 If you are creating a Blender integration that will deal with 
@@ -19,7 +19,7 @@ Documentation
 
 To build the documentation, run the following command from the root of the
 
-repository::
+.. code-block:: bash
 
     python -m pip install sphinx
     sphinx-build -b html docs/source/ docs/build/html
