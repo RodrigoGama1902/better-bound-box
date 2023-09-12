@@ -2,16 +2,23 @@
 BETTER BOUND BOX
 #################
 
-This Blender module provides a better BoundBox system for Blender integrations, 
-with support for multiple objects and various utility functions.
+This submodule provides a better BoundBox system for Blender integrations, 
+with support for multiple objects at the same time, non destructive transforms operations
+and various utility functions to work with.
+
+.. image:: ./docs/images/intro.gif
+    :align: center
+    :alt: BoundBox example
+
+| 
 
 If you are creating a Blender integration that will deal with 
-multiple objects that represents only one model and it dimensions properties, 
-this module is for you.
+multiple objects that represents only one model and you need to work with 
+its dimensions properties, this module is for you.
 
-It solves problems with models with multiple objects in it composition woth irregular transforms,
-using always real dimensions for all operations. including getting model real dimensions, resizing,
-transform, origins and more.
+It solves all problems related to the default Blender BoundBox system, including problems with
+difficulty to get real dimensions data, irregular transforms, problems when dealing with multiple objects.
+at the same time. All of this keeping intact the original objects transforms from the model.
 
 *************
 Documentation

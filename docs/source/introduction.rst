@@ -8,6 +8,12 @@ This submodule provides a better BoundBox system for Blender integrations,
 with support for multiple objects at the same time, non destructive transforms operations
 and various utility functions to work with.
 
+.. image:: ../images/intro.gif
+    :align: center
+    :alt: BoundBox example
+
+| 
+
 If you are creating a Blender integration that will deal with 
 multiple objects that represents only one model and you need to work with 
 its dimensions properties, this module is for you.
