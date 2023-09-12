@@ -1,0 +1,20 @@
+[tool.pyright]
+
+reportMissingImports = "Warning"
+reportMissingTypeStubs = true
+reportGeneralTypeIssues = true
+reportOptionalMemberAccess = true
+reportOptionalSubscript = true
+
+pythonVersion = "3.11"
+pythonPlatform = "Windows"
+
+[tool.bpytest]
+test_directory_path=""
+selected_functions=[]
+pythonpath=""
+show_log=true
+toggle_console=false
+raise_error=false
+
+

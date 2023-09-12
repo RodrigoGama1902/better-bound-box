@@ -5,15 +5,15 @@ Introduction
 ************
 
 This module provides a better BoundBox system for Blender integrations, 
-with support for multiple objects and various utility functions.
+with support for multiple objects and various utility functions and non destructive transforms.
 
 If you are creating a Blender integration that will deal with 
 multiple objects that represents only one model and it dimensions properties, 
 this module is for you.
 
-It solves problems with models with multiple objects in it composition woth irregular transforms,
+It solves problems with models with multiple objects in it composition with irregular transforms,
 using always real dimensions for all operations. including getting model real dimensions, resizing,
-transform, origins and more.
+transform, origins and more, keeping intact the original objects transforms from the model.
 
 Code examples:
 

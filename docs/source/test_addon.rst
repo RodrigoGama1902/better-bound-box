@@ -13,6 +13,7 @@ Here are the current test operators shown in the add-on panel:
     The test operators are only available in the ``Object Mode``. to use it, just select multiple objects
     and click on the operator button.
 
+- ``init_bound_box`` - executes :func:`better_bound_box.utils.init_bound_box`
 - ``center_objects_by_center`` - executes :func:`better_bound_box.utils.center_objects_by_center`
 - ``center_object_by_bottom_center`` - executes :func:`better_bound_box.utils.center_object_by_bottom_center`
 - ``scale_object_to_height`` - executes :func:`better_bound_box.utils.scale_object_to_height` with the value of ``2.0``

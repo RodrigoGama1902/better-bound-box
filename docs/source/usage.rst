@@ -24,14 +24,6 @@ You can access all the BoundBox methods in the :class:`~better_bound_box.bound_b
     bound_box = BoundBox(context, my_model_objs) # Create the BoundBox instance
     model_bottom_center = bound_box.get_bottom_center() # Get the bottom center of the model
 
-By default, in the BoundBox initialization, the transform matrix of the objects will automatically applied,
-so the calculations will be done in the world space. but if you don't want then to be applied, you can pass
-the ``apply_transforms`` parameter as ``False`` in the BoundBox initialization.
-
-.. code-block:: python
-
-    bound_box = BoundBox(context, my_model_objs, apply_transform = False) # Create the BoundBox instance
-
 .. warning::
 
     If you don't apply the transforms, the calculations will be done in the local space of the objects, so

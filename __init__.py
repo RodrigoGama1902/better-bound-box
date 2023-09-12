@@ -1,6 +1,7 @@
-import bpy
+import bpy # type:ignore  
 
 from .src.better_bound_box.utils import (
+    init_bound_box,
     center_objects_by_center,
     center_objects_by_bottom_center,
     scale_objects_to_height,
@@ -35,6 +36,7 @@ class BOBB_PT_TestPanel(bpy.types.Panel):
 
         box = layout.box()
 
+        box.operator("bobb.test_operator", text = "init_bound_box").test_operaration = "init_bound_box"
         box.operator("bobb.test_operator", text = "center_objects_by_center").test_operaration = "center_objects_by_center"
         box.operator("bobb.test_operator", text = "center_object_by_bottom_center").test_operaration = "center_object_by_bottom_center"
         box.operator("bobb.test_operator", text = "scale_object_to_height").test_operaration = "scale_object_to_height"
@@ -50,6 +52,7 @@ class BOBB_PT_TestOperator(bpy.types.Operator):
         name = "Test Operation",
         description = "Test Operation",
         items = [
+            ("init_bound_box", "", ""),
             ("center_objects_by_center", "", ""),
             ("center_object_by_bottom_center", "", ""),
             ("scale_object_to_height", "", ""),
@@ -57,34 +60,40 @@ class BOBB_PT_TestOperator(bpy.types.Operator):
             ("scale_object_to_depth", "", ""),
             ("scale_object_to_max", "", "")
         ]
-    )
+    ) # type:ignore
+
+    def init_bound_box(self, context):
+        objs = bpy.context.selected_objects
+        init_bound_box(context, objs, debug = True)
 
     def center_objects_by_center(self, context):
         objs = bpy.context.selected_objects
-        center_objects_by_center(context, objs)
+        center_objects_by_center(context, objs, debug = True)
 
     def center_objects_by_bottom_center(self, context):
         objs = bpy.context.selected_objects
-        center_objects_by_bottom_center(context, objs)
+        center_objects_by_bottom_center(context, objs, debug = True)
 
     def scale_object_to_height(self, context):
         objs = bpy.context.selected_objects
-        scale_objects_to_height(context, objs, 2)
+        scale_objects_to_height(context, objs, 2, debug = True)
 
     def scale_object_to_width(self, context):
         objs = bpy.context.selected_objects
-        scale_objects_to_width(context, objs, 2)
+        scale_objects_to_width(context, objs, 2, debug = True)
 
     def scale_object_to_depth(self, context):
         objs = bpy.context.selected_objects
-        scale_objects_to_depth(context, objs, 2)
+        scale_objects_to_depth(context, objs, 2, debug = True)
 
     def scale_object_to_max(self, context):
         objs = bpy.context.selected_objects
-        scale_objects_to_max(context, objs, 1, 1, 1)
+        scale_objects_to_max(context, objs, 1, 1, 1, debug = True)
 
     def execute(self, context):
         match self.test_operaration:
+            case "init_bound_box":
+                self.init_bound_box(context)
             case "center_objects_by_center":
                 self.center_objects_by_center(context)
             case "center_object_by_bottom_center":
