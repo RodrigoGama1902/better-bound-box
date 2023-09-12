@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>better_bound_box.bound_box &mdash; Better Bound Box 0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Better Bound Box
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test_addon.html">Test Addon</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Better Bound Box</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">better_bound_box.bound_box</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for better_bound_box.bound_box</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">bpy</span> <span class="c1">#type:ignore</span>
+<span class="kn">import</span> <span class="nn">bmesh</span> <span class="c1">#type:ignore</span>
+
+<span class="kn">import</span> <span class="nn">statistics</span>
+<span class="kn">from</span> <span class="nn">.debug_utils</span> <span class="kn">import</span> <span class="n">add_display_point</span>
+
+<div class="viewcode-block" id="BoundBox">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox">[docs]</a>
+<span class="k">class</span> <span class="nc">BoundBox</span><span class="p">:</span>
+
+<div class="viewcode-block" id="BoundBox.__init__">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">objs</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">bpy</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Object</span><span class="p">],</span> <span class="n">apply_transform</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39; BoundBox initialization class</span>
+
+<span class="sd">        :param context: context of the operator</span>
+<span class="sd">        :type context: bpy.context</span>
+<span class="sd">        :param objs: objects to calculate the bound box</span>
+<span class="sd">        :type objs: list[bpy.types.Object]</span>
+<span class="sd">        :param apply_transform: apply transform to the objects before calculating the bound box, </span>
+<span class="sd">            it&#39;s optional, but it&#39;s recommended to apply the transform before calculating the bound box</span>
+<span class="sd">        :type apply_transform: bool</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">objs</span> <span class="o">=</span> <span class="n">objs</span>
+
+        <span class="k">if</span> <span class="n">apply_transform</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_transform</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bv</span> <span class="o">=</span> <span class="n">BoundVectors</span><span class="p">(</span><span class="n">objs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_apply_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Apply transform to the objects. this method is context destructive</span>
+<span class="sd">        so it automatically fix the selection and active object after applying the transform&#39;&#39;&#39;</span>
+        
+        <span class="c1"># Storing original values</span>
+        <span class="n">original_selected_objs</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">selected_objects</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">original_active_obj</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">view_layer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">active</span>
+
+        <span class="c1"># Fixing selection</span>
+        <span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">select_all</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;DESELECT&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objs</span><span class="p">:</span>
+            <span class="n">ob</span><span class="o">.</span><span class="n">select_set</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">view_layer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">ob</span>
+
+        <span class="c1"># Executing</span>
+        <span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">transform_apply</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Restoring original values</span>
+        <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="n">original_selected_objs</span><span class="p">:</span>
+            <span class="n">ob</span><span class="o">.</span><span class="n">select_set</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">view_layer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">original_active_obj</span>
+
+<div class="viewcode-block" id="BoundBox.get_center">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.get_center">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_center</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get center of the object&#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="BoundBox.get_bottom_center">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.get_bottom_center">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_bottom_center</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get bottom center of the object&#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
+
+    
+<div class="viewcode-block" id="BoundBox.get_hight_vectors">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.get_hight_vectors">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_hight_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get height min and max vector points&#39;&#39;&#39;</span>
+
+        <span class="n">v1</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+        
+        <span class="k">return</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span></div>
+
+
+<div class="viewcode-block" id="BoundBox.get_width_vectors">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.get_width_vectors">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_width_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get width min and max vector points&#39;&#39;&#39;</span>
+
+        <span class="n">v1</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+        
+        <span class="k">return</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span></div>
+
+        
+<div class="viewcode-block" id="BoundBox.get_depth_vectors">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.get_depth_vectors">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_depth_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get depth min and max vector points&#39;&#39;&#39;</span>
+
+        <span class="n">v1</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+        
+        <span class="k">return</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span></div>
+
+
+<div class="viewcode-block" id="BoundBox.get_real_height">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.get_real_height">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_real_height</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">round_value</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get real height of the bound box&#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">round_value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BoundBox.get_real_width">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.get_real_width">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_real_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">round_value</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get real width of the bound box&#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">min_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">round_value</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="BoundBox.get_real_depth">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.get_real_depth">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_real_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">round_value</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get real depth of the bound box&#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">max_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">round_value</span><span class="p">)</span></div>
+
+   
+<div class="viewcode-block" id="BoundBox.get_largest_dimension">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.get_largest_dimension">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_largest_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get largest dimension of the bound box (height, width or depth)&#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_real_height</span><span class="p">(),</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_real_width</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_real_depth</span><span class="p">()</span>
+            <span class="p">)</span></div>
+
+ 
+<div class="viewcode-block" id="BoundBox.get_mean_dimension">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.get_mean_dimension">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_mean_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get mean dimension of the object&#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_real_height</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_real_width</span><span class="p">(),</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_real_depth</span><span class="p">()]</span>
+        <span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="BoundBox.debug">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.debug">[docs]</a>
+    <span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Enable debug mode, when enabled it will display each </span>
+<span class="sd">        bound box vector in the viewport as a point&#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bv</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="n">add_display_point</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_center</span><span class="p">(),</span> <span class="n">viewport_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">size</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="n">add_display_point</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&quot;bottom_center&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bottom_center</span><span class="p">(),</span> <span class="n">viewport_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">size</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BoundBox.set_origin">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.set_origin">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_origin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">location</span> <span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Set origin of the object to the given location, this method is context destructive</span>
+<span class="sd">        so it automatically fix the selection and active object after applying the transform&#39;&#39;&#39;</span>
+
+        <span class="c1"># Storing original values</span>
+        <span class="n">original_selected_objs</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">selected_objects</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">original_active_obj</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">view_layer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">active</span>
+        <span class="n">original_cursor_location</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Fixing selection</span>
+        <span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">select_all</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;DESELECT&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objs</span><span class="p">:</span>
+            <span class="n">ob</span><span class="o">.</span><span class="n">select_set</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">view_layer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">ob</span>
+
+        <span class="c1"># Executing</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span>
+        <span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">origin_set</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;ORIGIN_CURSOR&#39;</span><span class="p">)</span> 
+
+        <span class="c1"># Restoring original values</span>
+        <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="n">original_selected_objs</span><span class="p">:</span>
+            <span class="n">ob</span><span class="o">.</span><span class="n">select_set</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">context</span><span class="o">.</span><span class="n">view_layer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">original_active_obj</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">original_cursor_location</span></div>
+
+
+<div class="viewcode-block" id="BoundBox.set_location">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.set_location">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span> <span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Set location of the object to the given location&#39;&#39;&#39;</span>
+
+        <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objs</span><span class="p">:</span>
+            <span class="n">ob</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span></div>
+
+
+<div class="viewcode-block" id="BoundBox.scale_to_height">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.scale_to_height">[docs]</a>
+    <span class="k">def</span> <span class="nf">scale_to_height</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Scale object to the given height&#39;&#39;&#39;</span>
+
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">height</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_real_height</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objs</span><span class="p">:</span>
+            <span class="n">ob</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BoundBox.scale_to_width">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.scale_to_width">[docs]</a>
+    <span class="k">def</span> <span class="nf">scale_to_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Scale object to the given width&#39;&#39;&#39;</span>
+
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">width</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_real_width</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objs</span><span class="p">:</span>
+            <span class="n">ob</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BoundBox.scale_to_depth">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundBox.scale_to_depth">[docs]</a>
+    <span class="k">def</span> <span class="nf">scale_to_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Scale object to the given depth&#39;&#39;&#39;</span>
+
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">depth</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_real_depth</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objs</span><span class="p">:</span>
+            <span class="n">ob</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="BoundVectors">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundVectors">[docs]</a>
+<span class="k">class</span> <span class="nc">BoundVectors</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Generates all vector min and max values of the objs&#39;&#39;&#39;</span>
+    
+    <span class="n">max_vertex_x</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> 
+    <span class="n">max_vertex_y</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> 
+    <span class="n">max_vertex_z</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+            
+    <span class="n">min_vertex_x</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="n">min_vertex_y</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> 
+    <span class="n">min_vertex_z</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> 
+    
+<div class="viewcode-block" id="BoundVectors.__init__">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundVectors.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objs</span><span class="p">):</span> 
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_y</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_z</span> <span class="o">=</span> <span class="p">[]</span>
+                
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_y</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_z</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_objs_bound_vectors</span><span class="p">(</span><span class="n">objs</span><span class="p">)</span></div>
+
+                
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_object_vertices</span><span class="p">(</span><span class="n">objs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get all vertices of the objects&#39;&#39;&#39;</span>
+
+        <span class="n">total_verts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">select_all</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;DESELECT&#39;</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="n">objs</span><span class="p">:</span> 
+                    
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ob</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;MESH&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            
+            <span class="n">ob</span><span class="o">.</span><span class="n">select_set</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>   
+            <span class="n">bpy</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">view_layer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">ob</span>     
+            <span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">mode_set</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;EDIT&#39;</span><span class="p">)</span>
+            
+            <span class="n">me</span> <span class="o">=</span> <span class="n">ob</span><span class="o">.</span><span class="n">data</span>    
+            <span class="n">bm</span> <span class="o">=</span> <span class="n">bmesh</span><span class="o">.</span><span class="n">from_edit_mesh</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+            
+            <span class="n">total_verts</span><span class="o">.</span><span class="n">extend</span><span class="p">([[</span><span class="n">v</span><span class="o">.</span><span class="n">co</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                    <span class="n">v</span><span class="o">.</span><span class="n">co</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                    <span class="n">v</span><span class="o">.</span><span class="n">co</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">bm</span><span class="o">.</span><span class="n">verts</span><span class="p">])</span>
+
+            <span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">mode_set</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;OBJECT&#39;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">total_verts</span>
+
+    <span class="k">def</span> <span class="nf">_get_objs_bound_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Get all bound vectors of the objects&#39;&#39;&#39;</span>
+                
+        <span class="n">total_verts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_object_vertices</span><span class="p">(</span><span class="n">objs</span><span class="p">)</span>
+                
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">total_verts</span><span class="p">:</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_x</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_x</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_y</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_y</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_z</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_z</span> <span class="o">=</span> <span class="n">v</span>
+                
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_x</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_x</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_y</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_y</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_z</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_z</span> <span class="o">=</span> <span class="n">v</span>
+            
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_x</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_y</span> <span class="o">=</span> <span class="n">v</span>             
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_z</span> <span class="o">=</span> <span class="n">v</span>  
+                            
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_x</span> <span class="o">=</span> <span class="n">v</span>              
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_y</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_y</span> <span class="o">=</span> <span class="n">v</span>           
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_z</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_z</span> <span class="o">=</span> <span class="n">v</span>
+                
+        <span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">mode_set</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;OBJECT&#39;</span><span class="p">)</span>  
+
+<div class="viewcode-block" id="BoundVectors.debug">
+<a class="viewcode-back" href="../../api_reference/bound_box.html#better_bound_box.bound_box.BoundVectors.debug">[docs]</a>
+    <span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Enable debug mode, when enabled it will display each </span>
+<span class="sd">        bound box vector in the viewport as a point&#39;&#39;&#39;</span>
+
+        <span class="n">add_display_point</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&quot;max_x&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_x</span><span class="p">)</span>
+        <span class="n">add_display_point</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&quot;max_y&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_y</span><span class="p">)</span>
+        <span class="n">add_display_point</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&quot;max_z&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_vertex_z</span><span class="p">)</span>
+
+        <span class="n">add_display_point</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&quot;min_x&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_x</span><span class="p">)</span>
+        <span class="n">add_display_point</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&quot;min_y&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_y</span><span class="p">)</span>
+        <span class="n">add_display_point</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&quot;min_z&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_vertex_z</span><span class="p">)</span></div>
+</div>
+
+
+
+        
+       
+
+
+
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Rodrigo Gama.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

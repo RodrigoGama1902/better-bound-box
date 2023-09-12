@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>better_bound_box.utils &mdash; Better Bound Box 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=2709fde1"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Test Addon" href="../test_addon.html" />
+    <link rel="prev" title="better_bound_box.bound_box" href="bound_box.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Better Bound Box
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#module-better_bound_box">better_bound_box</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="bound_box.html">better_bound_box.bound_box</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">better_bound_box.utils</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#better_bound_box.utils.center_objects_by_center"><code class="docutils literal notranslate"><span class="pre">center_objects_by_center()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#better_bound_box.utils.center_objects_by_bottom_center"><code class="docutils literal notranslate"><span class="pre">center_objects_by_bottom_center()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#better_bound_box.utils.scale_objects_to_height"><code class="docutils literal notranslate"><span class="pre">scale_objects_to_height()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#better_bound_box.utils.scale_objects_to_width"><code class="docutils literal notranslate"><span class="pre">scale_objects_to_width()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#better_bound_box.utils.scale_objects_to_depth"><code class="docutils literal notranslate"><span class="pre">scale_objects_to_depth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#better_bound_box.utils.scale_objects_to_max"><code class="docutils literal notranslate"><span class="pre">scale_objects_to_max()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test_addon.html">Test Addon</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Better Bound Box</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Reference</a></li>
+      <li class="breadcrumb-item active">better_bound_box.utils</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-better_bound_box.utils">
+<span id="better-bound-box-utils"></span><h1>better_bound_box.utils<a class="headerlink" href="#module-better_bound_box.utils" title="Link to this heading"></a></h1>
+<p>Utils module for the better_object_bound_box addon</p>
+<p>This module provides a set of functions to use the bound box funtionality
+but without interacting with the BoundBox class directly. It’s a more user
+friendly way to use the addon.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="better_bound_box.utils.center_objects_by_center">
+<span class="sig-prename descclassname"><span class="pre">better_bound_box.utils.</span></span><span class="sig-name descname"><span class="pre">center_objects_by_center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/better_bound_box/utils.html#center_objects_by_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#better_bound_box.utils.center_objects_by_center" title="Link to this definition"></a></dt>
+<dd><p>Center objects by center of the bound box in the scene</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="better_bound_box.utils.center_objects_by_bottom_center">
+<span class="sig-prename descclassname"><span class="pre">better_bound_box.utils.</span></span><span class="sig-name descname"><span class="pre">center_objects_by_bottom_center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/better_bound_box/utils.html#center_objects_by_bottom_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#better_bound_box.utils.center_objects_by_bottom_center" title="Link to this definition"></a></dt>
+<dd><p>Center objects by bottom center of the bound box in the scene</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="better_bound_box.utils.scale_objects_to_height">
+<span class="sig-prename descclassname"><span class="pre">better_bound_box.utils.</span></span><span class="sig-name descname"><span class="pre">scale_objects_to_height</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/better_bound_box/utils.html#scale_objects_to_height"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#better_bound_box.utils.scale_objects_to_height" title="Link to this definition"></a></dt>
+<dd><p>Scale objects to the given height</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="better_bound_box.utils.scale_objects_to_width">
+<span class="sig-prename descclassname"><span class="pre">better_bound_box.utils.</span></span><span class="sig-name descname"><span class="pre">scale_objects_to_width</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/better_bound_box/utils.html#scale_objects_to_width"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#better_bound_box.utils.scale_objects_to_width" title="Link to this definition"></a></dt>
+<dd><p>Scale objects to the given width</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="better_bound_box.utils.scale_objects_to_depth">
+<span class="sig-prename descclassname"><span class="pre">better_bound_box.utils.</span></span><span class="sig-name descname"><span class="pre">scale_objects_to_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/better_bound_box/utils.html#scale_objects_to_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#better_bound_box.utils.scale_objects_to_depth" title="Link to this definition"></a></dt>
+<dd><p>Scale objects to the given depth</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="better_bound_box.utils.scale_objects_to_max">
+<span class="sig-prename descclassname"><span class="pre">better_bound_box.utils.</span></span><span class="sig-name descname"><span class="pre">scale_objects_to_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_with</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/better_bound_box/utils.html#scale_objects_to_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#better_bound_box.utils.scale_objects_to_max" title="Link to this definition"></a></dt>
+<dd><p>Scale objects to the given max dimension. It takes the highest 
+dimension of the bound box and scales this dimension to it max value.</p>
+<p>Ex: if this function is used in a object that has a bound box of width=2, height=3 and depth=4, 
+and the max values passed to the functions are 3, 3 and 3 respectively, the object will be scaled based on the depth dimension,
+because it’s the highest dimension of the bound box</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bound_box.html" class="btn btn-neutral float-left" title="better_bound_box.bound_box" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../test_addon.html" class="btn btn-neutral float-right" title="Test Addon" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Rodrigo Gama.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
