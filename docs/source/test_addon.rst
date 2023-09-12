@@ -3,8 +3,8 @@
 Test Addon
 ------------
 
-You can use this library repository as a Blender add-on installation, 
-so you can test the functionality of the library. To install it just zip the repository folder 
+You can use this submodule repository as a Blender add-on installation, 
+so you can test the functionality of it. To install it just zip the submodule repository folder 
 and install it as a Blender add-on. The add-on can be found in the ``3D View`` in a tab named ``BOBB``.
 
 Here are the current test operators shown in the add-on panel:

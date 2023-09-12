@@ -1,3 +1,9 @@
+'''
+:class BoundVectors:  The BoundBox class is responsible for calculating each vector that generates the bound box object
+
+:class BoundBox: it's the core of the addon. The BoundBox class is responsible for calculating the bound box of the objects passed to it init method
+
+'''
 
 import bpy #type:ignore
 import bmesh #type:ignore

@@ -3,21 +3,24 @@
 Installation
 ------------
 
-To use this module in your Blender Add-on, the easiest way add to your project is to clone the repository into a 
-``libs`` folder and add the following code to the top of your add-on ``__init__.py`` file:
+To use this submodule in your Blender Add-on, all you have to do is to copy the ``better_bound_box`` folder into your add-on folder 
+and import it in your add-on ``__init__.py`` file and add it to the ``sys.path``.
 
-This is how the folder structure should look like:
+.. tip:: For better organization, you can create a ``libs`` folder in your add-on folder and copy
+    the ``better_bound_box`` folder inside it.
+    
+    This is how the folder structure should look like:
 
-.. code-block:: bash
+    .. code-block:: bash
 
-    source # This is your add-on development/source folder
-    ├── addon 
-    ├── libs
-    │   └── better-bound-box # This is the better-bound-box module repository
-    │       └── src
-    └── __init__.py # This is your add-on __init__.py file
+        source # This is your add-on development/source folder
+        ├── addon 
+        ├── libs
+        │   └── better-bound-box # This is the better-bound-box submodule repository
+        │       └── src
+        └── __init__.py # This is your add-on __init__.py file
 
-Here is the code to add to your ``__init__.py`` file:
+Here is an code example of how to use the module in your add-on:
 
 .. code-block:: python
 

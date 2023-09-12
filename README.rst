@@ -22,6 +22,7 @@ To build the documentation, run the following command from the root of the
 .. code-block:: bash
 
     python -m pip install sphinx
+    python -m pip install sphinx-rtd-theme
     sphinx-build -b html docs/source/ docs/build/html
 
 The documentation will be built under ``docs/build/html``. after that, open the index.html file.

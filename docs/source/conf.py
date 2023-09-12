@@ -42,7 +42,7 @@ html_static_path = ['_static']
 autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 autodoc_member_order = 'bysource'
 
-autodoc_mock_imports = ["bpy","bmesh"]
+autodoc_mock_imports = ["bpy","bmesh", "mathutils"]
 
 def autodoc_skip(app, what, name, obj, skip, options):
     '''Don't skip __init__ method for autodoc.'''

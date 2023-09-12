@@ -1,7 +1,7 @@
 Usage
 =====
 
-There is two ways of using this library, you can directly use the :class:`~better_bound_box.bound_box.BoundBox`
+There is two ways of using this Blender submodule, you can directly use the :class:`~better_bound_box.bound_box.BoundBox`
 class, or just use all utility functions from :mod:`~better_bound_box.utils`, the differences will be explained
 later in this page.
 
@@ -24,11 +24,6 @@ You can access all the BoundBox methods in the :class:`~better_bound_box.bound_b
     bound_box = BoundBox(context, my_model_objs) # Create the BoundBox instance
     model_bottom_center = bound_box.get_bottom_center() # Get the bottom center of the model
 
-.. warning::
-
-    If you don't apply the transforms, the calculations will be done in the local space of the objects, so
-    the results may not be what you expect.
-
 When using the BoundBox class, you can enable the debug mode, so you can see the bounding box representation
 of your model. To enable the debug mode, just call the :meth:`~better_bound_box.bound_box.BoundBox.debug` in 
 the BoundBox instance.
@@ -40,14 +35,14 @@ the BoundBox instance.
 Utils module method
 -------------------
 
-When using the :mod:`~better_bound_box.utils` module, is lot easier because you don't have to create 
+Using the :mod:`~better_bound_box.utils` module, is lot easier because you don't have to create 
 an BoundBox instance, just pass the list of objects of your model to the functions and it will automatically 
 handle it for you. it's useful if you want to use an specific function that already does exaclty what you need.
 
 You can access all the utils module functions in the :mod:`~better_bound_box.utils` module documentation.
 
-bringing back the code example from this document introduction, if you want to center your object in
-the scene world origin, this is the two ways of doing it:
+bringing back the code example from this document introduction, if you want to center multiple objects in
+the scene world origin, there is two ways of doing it:
 
 .. code-block:: python
 

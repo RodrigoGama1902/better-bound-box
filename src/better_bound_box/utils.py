@@ -15,7 +15,7 @@ def init_bound_box(context, objs, debug = False) -> None:
         bound_box.debug(context)
 
 def center_objects_by_center(context, objs, debug = False) -> None:
-    '''Center objects by center of the bound box in the scene'''
+    '''Center objects by center point of the final bound box in the scene'''
 
     bound_box = BoundBox(context, objs)
     bound_box.set_origin(context, location = bound_box.get_center())
@@ -25,7 +25,7 @@ def center_objects_by_center(context, objs, debug = False) -> None:
         bound_box.debug(context)
 
 def center_objects_by_bottom_center(context, objs, debug = False) -> None:
-    '''Center objects by bottom center of the bound box in the scene'''
+    '''Center objects by bottom center point of the final bound box in the scene'''
 
     bound_box = BoundBox(context, objs)
     bound_box.set_origin(context, location = bound_box.get_bottom_center())
