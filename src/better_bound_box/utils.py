@@ -64,7 +64,14 @@ def scale_objects_to_depth(context, objs, depth, debug = False) -> None:
     if debug:
         bound_box.debug(context)
 
-def scale_objects_to_max(context, objs, max_width =1, max_height = 1, max_depth = 1, debug = False) -> None:
+def scale_objects_to_max(
+        context, 
+        objs, 
+        max_width : float =1.0, 
+        max_height : float = 1.0, 
+        max_depth : float = 1.0, 
+        debug = False) -> None:
+    
     '''Scale objects to the given max dimension. It takes the highest 
     dimension of the bound box and scales this dimension to it max value.
     
